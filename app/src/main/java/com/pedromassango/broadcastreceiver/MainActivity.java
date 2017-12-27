@@ -21,17 +21,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        registerReceiver(receiver, new IntentFilter(CustomBroadCastReceiver.SHOW_NOTIFICATION));
+        // Button show notification click
+        findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showNotification();
+            }
+        });
+
+        // Use LocalBroadcast to use it only on this app
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(receiver, new IntentFilter(CustomBroadCastReceiver.SHOW_NOTIFICATION));
     }
-
-    @Override
-    protected void onDestroy() {
-
-       unregisterReceiver(receiver);
-
-        super.onDestroy();
-    }
-
 
     public void onStart() {
         super.onStart();
@@ -53,7 +55,15 @@ public class MainActivity extends AppCompatActivity {
                 PackageManager.DONT_KILL_APP);
     }
 
+    @Override
+    protected void onDestroy() {
 
+        // Unregister the receiver
+        LocalBroadcastManager.getInstance(this).
+                unregisterReceiver(receiver);
+
+        super.onDestroy();
+    }
 
     public void showNotification() {
         String message = ((EditText) findViewById(R.id.edt_message)).getText().toString();
